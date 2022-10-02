@@ -6,10 +6,13 @@ const handler = async (headers,data,ws) => {
     const dataObj = JSON.parse(data.toString());
     switch(dataObj.command) { 
         case "login": {
-           const user = await auth(headers.username,dataObj.hwid);
+           const user = await auth(headers.username,headers.hwid);
               if(user.success) {
                 LogInfo(`${new Date()} ${user?.username} login success`);
                 ws.send(JSON.stringify({user: user}));
+              } else {
+                LogWarn(`${new Date()} ${user?.username} login failed`);
+                ws.send(JSON.stringify({error: "Invalid username or hwid"}));
               }
         }
         break;
